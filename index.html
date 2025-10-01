@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfitX - Smart Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        
+        header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .btn-admin {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .btn-admin:hover {
+            background: #dd7711;
+            transform: translateY(-2px);
+        }
+        
+        .market-preview {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 50px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .market-preview h2 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        
+        .market-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .market-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .market-card h4 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .market-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #48bb78;
+            margin-bottom: 5px;
+        }
+        
+        .market-change {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .market-change.positive {
+            color: #48bb78;
+        }
+        
+        .market-change.negative {
+            color: #f56565;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            opacity: 0.8;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 ProfitX</h1>
+            <p>Advanced Trading Platform with Real-time Market Data, Smart Analytics, and Secure Transactions</p>
+        </header>
+
+        <div class="market-preview">
+            <h2>Live Market Overview</h2>
+            <div class="market-cards" id="marketCards">
+                <!-- Market data will be loaded here -->
+                <div class="market-card">
+                    <h4>Bitcoin (BTC)</h4>
+                    <div class="market-price">$41,250.75</div>
+                    <div class="market-change positive">+2.35%</div>
+                </div>
+                <div class="market-card">
+                    <h4>Gold (XAU)</h4>
+                    <div class="market-price">$1,985.40</div>
+                    <div class="market-change negative">-0.85%</div>
+                </div>
+                <div class="market-card">
+                    <h4>NFT Index</h4>
+                    <div class="market-price">$3,245.60</div>
+                    <div class="market-change positive">+5.20%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Real-time Trading</h3>
+                <p>Execute trades with live market data and advanced charting tools. Stay ahead with real-time price movements.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Transactions</h3>
+                <p>Bank-level security with encrypted transactions and secure wallet management for your peace of mind.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Portfolio Management</h3>
+                <p>Track your investments, monitor performance, and optimize your trading strategy with smart analytics.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Instant Execution</h3>
+                <p>Lightning-fast trade execution with minimal latency. Never miss a trading opportunity again.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Advanced Analytics</h3>
+                <p>Comprehensive market analysis, technical indicators, and predictive insights to inform your decisions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Global Markets</h3>
+                <p>Access multiple markets including cryptocurrencies, commodities, and digital assets from one platform.</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 style="color: white; margin-bottom: 20px;">Ready to Start Trading?</h2>
+            <p style="color: white; opacity: 0.9; max-width: 600px; margin: 0 auto 30px;">
+                Join thousands of traders who trust ProfitX for their trading journey. Start with demo account or jump right into live trading.
+            </p>
+            <div class="cta-buttons">
+                <a href="/trade" class="btn btn-primary">Start Trading Now</a>
+                <a href="/admin" class="btn btn-admin">Admin Panel</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 ProfitX Trading Platform. All rights reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Built with cutting-edge technology for modern traders
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Load market data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMarketData();
+            
+            // Update market data every 10 seconds
+            setInterval(loadMarketData, 10000);
+        });
+
+        async function loadMarketData() {
+            try {
+                const response = await fetch('/api/market_data');
+                const data = await response.json();
+                
+                if (data.btc && data.xau && data.nft) {
+                    document.getElementById('marketCards').innerHTML = `
+                        <div class="market-card">
+                            <h4>Bitcoin (BTC)</h4>
+                            <div class="market-price">$${data.btc.price.toFixed(2)}</div>
+                            <div class="market-change ${data.btc.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.btc.change >= 0 ? '+' : ''}${data.btc.change.toFixed(2)}%
+                            </div>
+                        </div>
+                        <div class="market-card">
+                            <h4>Gold (XAU)</h4>
+                            <div class="market-price">$${data.xau.price.toFixed(2)}</div>
+                            <div class="market-change ${data.xau.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.xau.change >= 0 ? '+' : ''}${data.xau.change.toFixed(2)}%
+                            </div>
+                        </div>
+                        <div class="market-card">
+                            <h4>NFT Index</h4>
+                            <div class="market-price">$${data.nft.price.toFixed(2)}</div>
+                            <div class="market-change ${data.nft.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.nft.change >= 0 ? '+' : ''}${data.nft.change.toFixed(2)}%
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading market data:', error);
+            }
+        }
+    </script>
+</body>
+</html>
