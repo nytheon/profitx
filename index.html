@@ -15,6 +15,7 @@
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             overflow: hidden;
+            height: 100vh;
         }
         
         .container {
@@ -25,6 +26,7 @@
         
         .loading-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -38,6 +40,12 @@
             border-top: 5px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 16px;
         }
         
         @keyframes spin {
@@ -46,7 +54,7 @@
         }
         
         .hidden {
-            display: none;
+            display: none !important;
         }
         
         .iframe-container {
@@ -92,6 +100,7 @@
     <div class="container">
         <div id="loading" class="loading-container">
             <div class="loading-spinner"></div>
+            <div class="loading-text">Loading content...</div>
         </div>
         
         <div id="error" class="error-message hidden">
@@ -101,48 +110,104 @@
         </div>
         
         <div id="iframeContainer" class="iframe-container hidden">
-            <iframe id="webView" src="http://5.182.18.10:5000" title="Web Viewer"></iframe>
+            <iframe id="webView" src="about:blank" title="Web Viewer"></iframe>
         </div>
     </div>
 
     <script>
-        function loadPage() {
-            // Show loading indicator
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('error').classList.add('hidden');
-            document.getElementById('iframeContainer').classList.add('hidden');
-            
-            // Create iframe element
-            const iframe = document.getElementById('webView');
-            
-            // Set up event listeners for the iframe
-            iframe.onload = function() {
-                // Hide loading indicator and show iframe
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('iframeContainer').classList.remove('hidden');
-                
-                // Try to update the page title to match the iframe content
-                try {
-                    // This may not work due to cross-origin restrictions
-                    document.title = iframe.contentDocument.title || "Web Viewer";
-                } catch (e) {
-                    // Cross-origin restrictions prevent accessing iframe content
-                    console.log("Cannot access iframe content due to security restrictions");
-                }
-            };
-            
-            iframe.onerror = function() {
-                // Show error message
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error').classList.remove('hidden');
-            };
-            
-            // Set the iframe source
-            iframe.src = "http://5.182.18.10:5000";
+        // Configuration
+        const TARGET_URL = "http://5.182.18.10:5000";
+        const LOAD_TIMEOUT = 15000; // 15 seconds
+        
+        // DOM Elements
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const iframeContainerEl = document.getElementById('iframeContainer');
+        const iframeEl = document.getElementById('webView');
+        
+        // State
+        let loadTimeoutId = null;
+        let hasLoaded = false;
+        
+        function showLoading() {
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            iframeContainerEl.classList.add('hidden');
         }
         
-        // Load the page when the document is ready
-        document.addEventListener('DOMContentLoaded', loadPage);
+        function showError() {
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            iframeContainerEl.classList.add('hidden');
+        }
+        
+        function showContent() {
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            iframeContainerEl.classList.remove('hidden');
+        }
+        
+        function handleIframeLoad() {
+            console.log("Iframe loaded successfully");
+            hasLoaded = true;
+            clearTimeout(loadTimeoutId);
+            showContent();
+            
+            // Try to update the page title to match the iframe content
+            try {
+                // This may not work due to cross-origin restrictions
+                document.title = iframeEl.contentDocument?.title || "Web Viewer";
+            } catch (e) {
+                // Cross-origin restrictions prevent accessing iframe content
+                console.log("Cannot access iframe content due to security restrictions");
+            }
+        }
+        
+        function handleIframeError() {
+            console.error("Error loading iframe");
+            if (!hasLoaded) {
+                showError();
+            }
+        }
+        
+        function loadPage() {
+            // Reset state
+            hasLoaded = false;
+            showLoading();
+            
+            // Clear any existing timeout
+            if (loadTimeoutId) {
+                clearTimeout(loadTimeoutId);
+            }
+            
+            // Set up timeout
+            loadTimeoutId = setTimeout(() => {
+                if (!hasLoaded) {
+                    console.log("Loading timeout reached");
+                    // Try to show content anyway - sometimes iframe events don't fire properly
+                    showContent();
+                }
+            }, LOAD_TIMEOUT);
+            
+            // Set up event listeners
+            iframeEl.onload = handleIframeLoad;
+            iframeEl.onerror = handleIframeError;
+            
+            // Load the URL
+            console.log("Loading URL:", TARGET_URL);
+            iframeEl.src = TARGET_URL;
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', loadPage);
+        
+        // Add keyboard shortcut for reloading (Ctrl+R or Cmd+R)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                loadPage();
+            }
+        });
     </script>
 </body>
-</html>
+    </html>
